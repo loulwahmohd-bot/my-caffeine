@@ -1,0 +1,125 @@
+// Version: 1.0.0
+type AssignmentStatus__265509669 = {#graded; #pending; #submitted};
+type AssignmentType__843281706 = {#drawing; #mcq; #poll; #writing};
+type Assignment__275051835 =
+  {
+    atype : AssignmentType__843281706;
+    content : Text;
+    createdAt : Timestamp__301639476;
+    id : Nat;
+    sessionId : SessionId__1052913375;
+    title : Text
+  };
+type Badge__328781052 = {id : Nat; title : Text};
+type ChapterProgress__1040911910 =
+  {chapterId : Nat; completed : Bool; score : Nat};
+type Choice__794940263 = {correct : Bool; id : Nat; text : Text};
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type ExamScore__352184714 = {level : Nat; score : Nat; total : Nat};
+type GameScore__419857286 = {boxId : Nat; score : Nat; total : Nat};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type QuestionInternal__290057304 = {var q : Question__191755947};
+type QuestionType__152178236 = {#chapter; #exam; #game; #grammar; #writing};
+type Question__191755947 =
+  {
+    boxId : ?Nat;
+    chapterId : ?Nat;
+    choices : [Choice__794940263];
+    explanation : Text;
+    id : Nat;
+    level : ?Nat;
+    qtype : QuestionType__152178236;
+    text : Text
+  };
+type SessionId__1052913375 = Text;
+type SessionInternal__411454285 =
+  {
+    createdAt : Timestamp__301639476;
+    id : SessionId__1052913375;
+    var status : SessionStatus__459895397;
+    teacherId : UserId__158757552
+  };
+type SessionStatus__459895397 = {#active; #ended};
+type StudentInternal__154986105 =
+  {
+    var badges : [Badge__328781052];
+    var chapterProgress : [ChapterProgress__1040911910];
+    className : Text;
+    var drawingData : Text;
+    var examScores : [ExamScore__352184714];
+    var gameScores : [GameScore__419857286];
+    joinedAt : Timestamp__301639476;
+    name : Text;
+    var notes : Text;
+    var points : Nat;
+    sessionId : SessionId__1052913375;
+    var unlockedChars : [Nat];
+    userId : UserId__158757552
+  };
+type Submission__190071744 =
+  {
+    var answer : Text;
+    assignmentId : Nat;
+    var feedback : Text;
+    var grade : ?Nat;
+    sessionId : SessionId__1052913375;
+    var status : AssignmentStatus__265509669;
+    submittedAt : Timestamp__301639476;
+    userId : UserId__158757552
+  };
+type Timestamp__301639476 = Int;
+type UserId__158757552 = Text;
+actor {
+  stable assignments :
+    {
+      var root : Node__46230540<Nat, Assignment__275051835>;
+      var size : Nat__490723111
+    };
+  stable nextAId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable nextQId :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable questions :
+    {
+      var root : Node__46230540<Nat, QuestionInternal__290057304>;
+      var size : Nat__490723111
+    };
+  stable sessionCounter :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Nat]];
+      var elementIndex : Nat__490723111
+    };
+  stable sessions :
+    {
+      var root :
+        Node__46230540<SessionId__1052913375, SessionInternal__411454285>;
+      var size : Nat__490723111
+    };
+  stable students :
+    {
+      var root : Node__46230540<UserId__158757552, StudentInternal__154986105>;
+      var size : Nat__490723111
+    };
+  stable submissions :
+    {
+      var root :
+        Node__46230540<(Nat, UserId__158757552), Submission__190071744>;
+      var size : Nat__490723111
+    }
+};

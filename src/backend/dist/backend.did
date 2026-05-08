@@ -1,0 +1,154 @@
+type UserId = text;
+type Timestamp = int;
+type SubmissionPublic = 
+ record {
+   answer: text;
+   assignmentId: nat;
+   feedback: text;
+   grade: opt nat;
+   sessionId: SessionId;
+   status: AssignmentStatus;
+   submittedAt: Timestamp;
+   userId: UserId;
+ };
+type Student = 
+ record {
+   badges: vec Badge;
+   chapterProgress: vec ChapterProgress;
+   className: text;
+   examScores: vec ExamScore;
+   gameScores: vec GameScore;
+   joinedAt: Timestamp;
+   name: text;
+   points: nat;
+   sessionId: SessionId;
+   unlockedChars: vec nat;
+   userId: UserId;
+ };
+type SessionStatus = 
+ variant {
+   active;
+   ended;
+ };
+type SessionId = text;
+type Session = 
+ record {
+   createdAt: Timestamp;
+   id: SessionId;
+   status: SessionStatus;
+   teacherId: UserId;
+ };
+type Result_1 = 
+ variant {
+   err: text;
+   ok: nat;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type QuestionType = 
+ variant {
+   chapter;
+   exam;
+   game;
+   grammar;
+   writing;
+ };
+type Question = 
+ record {
+   boxId: opt nat;
+   chapterId: opt nat;
+   choices: vec Choice;
+   explanation: text;
+   id: nat;
+   level: opt nat;
+   qtype: QuestionType;
+   "text": text;
+ };
+type GameScore = 
+ record {
+   boxId: nat;
+   score: nat;
+   total: nat;
+ };
+type ExamScore = 
+ record {
+   level: nat;
+   score: nat;
+   total: nat;
+ };
+type Choice = 
+ record {
+   correct: bool;
+   id: nat;
+   "text": text;
+ };
+type ChapterProgress = 
+ record {
+   chapterId: nat;
+   completed: bool;
+   score: nat;
+ };
+type Badge = 
+ record {
+   id: nat;
+   title: text;
+ };
+type AssignmentType = 
+ variant {
+   drawing;
+   mcq;
+   poll;
+   writing;
+ };
+type AssignmentStatus = 
+ variant {
+   graded;
+   pending;
+   submitted;
+ };
+type Assignment = 
+ record {
+   atype: AssignmentType;
+   content: text;
+   createdAt: Timestamp;
+   id: nat;
+   sessionId: SessionId;
+   title: text;
+ };
+service : {
+  addQuestion: (q: Question) -> (nat);
+  awardBadge: (userId: UserId, badge: Badge) -> (Result);
+  classCompletion: (sessionId: SessionId) -> (nat) query;
+  createAssignment: (sessionId: SessionId, title: text, atype:
+   AssignmentType, content: text) -> (nat);
+  createSession: (teacherId: UserId) -> (SessionId);
+  deleteAssignment: (id: nat) -> ();
+  deleteQuestion: (id: nat) -> ();
+  endSession: (sessionId: SessionId, teacherId: UserId) -> (Result);
+  getLeaderboard: (sessionId: SessionId) -> (vec Student) query;
+  getSession: (sessionId: SessionId) -> (opt Session) query;
+  getStudent: (userId: UserId) -> (opt Student) query;
+  getSubmissions: (assignmentId: nat) -> (vec SubmissionPublic) query;
+  gradeSubmission: (assignmentId: nat, userId: UserId, grade: nat, feedback:
+   text) -> (Result);
+  grantPoints: (userId: UserId, delta: nat) -> (Result_1);
+  joinSession: (sessionId: SessionId, userId: UserId, name: text, className:
+   text) -> (Result);
+  listAssignments: (sessionId: SessionId) -> (vec Assignment) query;
+  listQuestions: (qtype: opt QuestionType, chapterId: opt nat, level:
+   opt nat, boxId: opt nat) -> (vec Question) query;
+  listStudents: (sessionId: SessionId) -> (vec Student) query;
+  mySubmissions: (userId: UserId) -> (vec SubmissionPublic) query;
+  saveDrawing: (userId: UserId, data: text) -> (Result);
+  saveNotes: (userId: UserId, notes: text) -> (Result);
+  submitAssignment: (assignmentId: nat, userId: UserId, sessionId: SessionId,
+   answer: text) -> (Result);
+  submitChapterProgress: (userId: UserId, progress: ChapterProgress) ->
+   (Result);
+  submitExamScore: (userId: UserId, score: ExamScore) -> (Result);
+  submitGameScore: (userId: UserId, score: GameScore) -> (Result);
+  updateQuestion: (q: Question) -> (Result);
+}
